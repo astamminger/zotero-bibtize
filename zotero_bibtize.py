@@ -2,7 +2,6 @@
 
 
 import re
-import pathlib
 
 
 class BibEntry(object):
@@ -134,11 +133,3 @@ class BibTex(object):
                         stack += 1
                 bibtex_entries.append((start_index, next_index+1))
         return bibtex_entries
-    
-
-if __name__ == "__main__":
-    btex = BibTex('./Diss.bib')
-    for entry in btex.entries:
-        e = BibEntry(entry)
-#        print(e.key)
-        print("{}: {}".format(e.type, e.key))
