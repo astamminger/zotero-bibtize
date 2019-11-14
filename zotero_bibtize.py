@@ -1,7 +1,9 @@
-#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 
 import re
 import pathlib
+
 
 class BibEntry(object):
     def __init__(self, bibtex_entry_string):
@@ -44,7 +46,6 @@ class BibEntry(object):
         entry_content =  re.split(',\n', entry_match.group(2))
         # return type, original zotero key and the actual content list 
         return (entry_type, entry_content[0], entry_content[1:])
-            
 
     def unescape_bibtex_entry_string(self, entry):
         """Remove zotero escapes and additional braces."""
@@ -85,7 +86,6 @@ class BibEntry(object):
     def remove_curly_from_capitalized(self, entry):
         """Remove the implicit curly braces added to capitalized words."""
         # next remove the implicit curly braces around capitalized words
-        #regex = r"\{[A-Z][^\s]*?\}"
         regex = r"\{[A-Z][\w]*?\}"
         words = re.findall(regex, entry)
         for word in words:
@@ -95,25 +95,11 @@ class BibEntry(object):
 
 class BibTex(object):
     """Bibtext contents"""
-    def __init__(self, bibtex_file=None):
-        if bibtex_file is None:
-            cwd = pathlib.Path('.').absolute()
-            bibtex_files = cwd.glob('*.bib')
-            if len(bibtex_files) > 1:
-                raise Exception("Found multiple bibtex files in the current "
-                                "location '{}'. Pleas specify an explicit "
-                                "file to use!".format(bibtex_files))
-            elif len(bibtex_fils) == 0:
-                raise Exception("No bibtex file found at the current location "
-                                "'{}'".format(str(cwd)))
-            bibtex_file = bibtex_files[0]
-        else:
-            bibtex_file = pathlib.Path(bibtex_file)
-            if bibtex_file.exists() is False:
-                raise Exception("The passed bibtex file '{}' does not exist"
-                                .format(str(bibtex_file)))
+    def __init__(self, bibtex_file):
         self.bibtex_file = bibtex_file
-        self.entries = self.parse_bibtex_entries()
+        self.entries = []
+        for entry in self.parse_bibtex_entries():
+            self.entries.append(BibEntry(entry))
 
     def parse_bibtex_entries(self):
         """Parse entries from file."""
@@ -149,36 +135,6 @@ class BibTex(object):
                 bibtex_entries.append((start_index, next_index+1))
         return bibtex_entries
     
-    def remove_zotero_escaping_from_entry(self, entry):
-        """Remove zotero escapes and additional braces."""
-        zotero_escaping_map = {
-	        r"|": r"\{\\textbar\}",
-	        r"<": r"\{\\textless\}",
-	        r">": r"\{\\textgreater\}",
-	        r"~": r"\{\\textasciitilde\}",
-	        r"^": r"\{\\textasciicircum\}",
-	        r"\\": r"\{\\textbackslash\}",
-#	        // See http://tex.stackexchange.com/questions/230750/open-brace-in-bibtex-fields/230754
-	        r"{" : r"\\{\\vphantom{\\}}",
-	        r"}" : r"\\vphantom{\\{}\\}"
-        }
-        # finish off the defined replacements
-        for (replacement, escape_sequence) in zotero_escaping_map.items():
-            entry, subs = re.subn(escape_sequence, replacement, entry)
-        # next remove the implicit curly braces around capitalized words
-        regex = r"\{[A-Z][^\s]*?\}"
-        words = re.findall(regex, entry)
-        for word in words:
-        #    print(word)
-            entry = entry.replace(word, word.lstrip("{").rstrip("}"))
-#        # un-escape everything that is neither a number nor a char
-#        regex = r"\\[^A-Za-z0-9]"
-#        escaped_chars = re.findall(regex, entry)
-#        for escaped_char in escaped_chars:
-#            unescaped_char = escaped_char.lstrip(r"\\")
-#            entry = entry.replace(escaped_char, unescaped_char)
-#        print(entry)
-        return entry
 
 if __name__ == "__main__":
     btex = BibTex('./Diss.bib')
