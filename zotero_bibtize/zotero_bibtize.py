@@ -92,8 +92,8 @@ class BibEntry(object):
         return entry
 
 
-class BibTex(object):
-    """Bibtext contents"""
+class BibTexFile(object):
+    """Bibtext file contents"""
     def __init__(self, bibtex_file):
         self.bibtex_file = bibtex_file
         self.entries = []

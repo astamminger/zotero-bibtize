@@ -4,7 +4,7 @@
 import click
 import pathlib
 
-from zotero_bibtize import BibTex
+from zotero_bibtize import BibTexFile
 
 
 @click.command()
@@ -27,5 +27,5 @@ def zotero_bibtize(path):
         if path.suffix != '.bib':
             raise Exception("Given file is not of type bibtex file.")
         bibtex_file = path
-    bibliography = BibTex(str(bibtex_file))
+    bibliography = BibTexFile(str(bibtex_file))
     print(bibliography.entries)

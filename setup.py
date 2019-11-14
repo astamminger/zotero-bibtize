@@ -24,6 +24,6 @@ setup(
         "click",
     ],
     entry_points={
-        'console_scripts': ['zotero-bibtize=cli:zotero_bibtize'],
+        'console_scripts': ['zotero-bibtize=zotero_bibtize.cli:zotero_bibtize'],
     },
 )
