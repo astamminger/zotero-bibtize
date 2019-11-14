@@ -29,7 +29,8 @@ class BibEntry(object):
         field, count = re.subn(r'^(\s*)|(\s*)$', '', field)
         # needs a separate expression for matching months which are
         # not exported with surrounding braces...
-        regex = r'^([\s\S]*)\s+\=\s+(?:\{([\s\S]*)\}|([a-z]{3})),*?$'
+        regex = r'^([\s\S]*)\s+\=\s+(?:\{([\s\S]*)\}|([\s\S]*)),*?$'
+        print(field)
         fmatch = re.match(regex, field)
         field_key = fmatch.group(1)
         field_content = fmatch.group(2) or fmatch.group(3)
@@ -80,11 +81,7 @@ class BibEntry(object):
             r"}": r"\\\}",
         }
         for (replacement, escape_sequence) in zotero_special_chars.items():
-            if (replacement == '$'):
-                print(entry)
             entry, subs = re.subn(escape_sequence, replacement, entry)
-            if (replacement == '$'):
-                print(entry)
         return entry
 
     def remove_curly_from_capitalized(self, entry):
