@@ -14,17 +14,17 @@ of the raw entry contents stored in the Zotero interface)
 
 ## Usage
 
-After installing the package `zotero-bibtize` can be used via call to the
+After installing the package `zotero-bibtize` can be invoked via a call to the
 `zotero-bibtize` command on the command line:
 
 ```console
-zotero-bibtize zotero_bibliography.bib bibtized_bibliography.bib
+$ zotero-bibtize zotero_bibliography.bib bibtized_bibliography.bib
 ``` 
 
 which will process the original contents `zotero_bibliography.bib` and writes
 the processed contents to the new `bibtized_bibliography.bib` file. 
-Note that there is no neccessity to specify a target file, in that case
-the input file will be overwritten.
+Note that specifying a target file is optional and the input file will be
+overwritten if left out.
 
 ## Example
 
