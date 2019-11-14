@@ -91,6 +91,13 @@ class BibEntry(object):
             entry = entry.replace(word, word.lstrip("{").rstrip("}"))
         return entry
 
+    def __str__(self):
+        # return bibtex entry as string
+        content = ['@{}{{{}'.format(self.type, self.key)]
+        for (field_key, field_content) in self.fields.items():
+            content.append('    {} = {{{}}}'.format(field_key, field_content))
+        return "\n".join(content) + '\n}\n'
+
 
 class BibTexFile(object):
     """Bibtext file contents"""
