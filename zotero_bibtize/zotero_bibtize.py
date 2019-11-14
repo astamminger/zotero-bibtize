@@ -71,15 +71,20 @@ class BibEntry(object):
     
     def remove_special_char_escaping(self, entry):
         zotero_special_chars = {
-            r"#": r"\\#",
-            r"%": r"\\%",
-            r"&": r"\\&",
-            r"_": r"\\_",
-            r"{": r"\\{",
-            r"}": r"\\}",
+            r"#": r"\\\#",
+            r"%": r"\\\%",
+            r"&": r"\\\&",
+            r"$": r"\\\$",
+            r"_": r"\\\_",
+            r"{": r"\\\{",
+            r"}": r"\\\}",
         }
         for (replacement, escape_sequence) in zotero_special_chars.items():
+            if (replacement == '$'):
+                print(entry)
             entry, subs = re.subn(escape_sequence, replacement, entry)
+            if (replacement == '$'):
+                print(entry)
         return entry
 
     def remove_curly_from_capitalized(self, entry):
