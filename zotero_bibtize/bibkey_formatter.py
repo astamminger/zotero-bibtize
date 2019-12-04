@@ -22,7 +22,7 @@ class KeyFormatter(object):
             formatted_key = self.field_format_map[field](*format_actions)
             formatter = "[{}]".format(raw)
             bibkey = bibkey.replace(formatter, formatted_key)
-            print(bibkey)
+        return bibkey
 
     def unpack_format_entries(self, key_format):
         """Extract the format entries from the total key_format string."""
