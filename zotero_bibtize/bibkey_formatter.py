@@ -14,7 +14,7 @@ class KeyFormatter(object):
             'title': self.format_title_key,
         }
 
-    def generate_key_entry(self, key_format):
+    def generate_key(self, key_format):
         """Generate a bibtex key according to the defined format."""
         format_list = self.unpack_format_entries(key_format)
         bibkey = key_format
