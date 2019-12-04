@@ -3,17 +3,15 @@
 
 import re
 
-# key format
-# [field1:formatter]
 
-
-class KeyGen(object):
+class KeyFormatter(object):
     def __init__(self, bibtex_entry):
         self.bibtex_entry = bibtex_entry
         self.field_format_map = {
             'author': self.format_author_key,
             'year': self.format_year_key,
             'journal': self.format_journal_key,
+            'title': self.format_title_key,
         }
 
     def generate_key_entry(self, key_format):
@@ -110,12 +108,11 @@ class KeyGen(object):
         """Generate formatted author key entry."""
         authors = self.bibtex_entry.fields['author']
         authors = self.remove_latex_content(authors)
-        # determine how many authors to use
-        if re.match(r"\d+", format_args[0]):
-            N_entry = int(format_args[0])
-            format_args = format_args[1:]
-        else:  # default number of authors is one
-            N_entry = 1
+        N_entry = 1  # default number of authors to use for the entry
+        if len(format_args) != 0:
+            if re.match(r"\d+", format_args[0]):
+                N_entry = int(format_args[0])
+                format_args = format_args[1:]
         author_list = [lastname.strip() for author in authors.split('and') 
                                         for lastname in author.split(',')[:1]] 
         # do not use more than N_entry author names for the entry
@@ -150,7 +147,6 @@ class KeyGen(object):
                 raise Exception("cannot define the number of words to use for "
                                 "the journal key format")
         journal = self.remove_latex_content(journal)
-        # this will also remove any whitespace from the string
         journal = re.sub(r"[^[A-Za-z0-9\s]", '', journal)
         journal = self.remove_function_words(journal)
         journal_list = journal.split(' ')
@@ -158,26 +154,20 @@ class KeyGen(object):
             journal_list = self.apply_format_to_content(journal_list, 
                                                         format_arg)    
         return "".join(journal_list)
-        
-        
 
-
-#def format_year_key(bibtex_entry, N, *format_args):
-#    pass
-#
-#
-#def format_journal_key(bibtex_entry, N, *format_args):
-#    pass
-#
-#
-#def format_title_key(bibtex_entry, N, *format_args):
-#    pass
-#
-# [authorsN:upper:abbreviate]
-# upper -> uppercase
-# abbreviate -> only first letter
-
-
-if __name__ == "__main__":
-    key_format = "[authors:upper:abbreviate][year][journal:capitalize:abbreviate]"
-    extract_format_entries(key_format)
+    def format_title_key(self, *format_args):
+        """Generate formatted title key entry."""
+        title = self.bibtex_entry.fields['title']
+        title = self.remove_latex_content(title)
+        N_entry = 3  # default number of words to use for the entry
+        if len(format_args) != 0:
+            if re.match(r"\d+", format_args[0]):
+                N_entry = int(format_args[0])
+                format_args = format_args[1:]
+        title = re.sub(r"[^[A-Za-z0-9\s]", '', title)
+        title = self.remove_function_words(title)
+        # do not use more than N_entry title words for the entry
+        title_list = title.split(' ')[:N_entry]
+        for format_arg in format_args:
+            title_list = self.apply_format_to_content(title_list, format_arg)    
+        return "".join(title_list)
