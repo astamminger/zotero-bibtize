@@ -30,7 +30,6 @@ class BibEntry(object):
         # needs a separate expression for matching months which are
         # not exported with surrounding braces...
         regex = r'^([\s\S]*)\s+\=\s+(?:\{([\s\S]*)\}|([\s\S]*)),*?$'
-        print(field)
         fmatch = re.match(regex, field)
         field_key = fmatch.group(1)
         field_content = fmatch.group(2) or fmatch.group(3)
