@@ -5,8 +5,8 @@ import re
 
 
 class KeyFormatter(object):
-    def __init__(self, bibtex_entry):
-        self.bibtex_entry = bibtex_entry
+    def __init__(self, bibtex_fields):
+        self.bibtex_fields = bibtex_fields
         self.field_format_map = {
             'author': self.format_author_key,
             'year': self.format_year_key,
@@ -106,7 +106,7 @@ class KeyFormatter(object):
 
     def format_author_key(self, *format_args):
         """Generate formatted author key entry."""
-        authors = self.bibtex_entry.fields['author']
+        authors = self.bibtex_fields['author']
         authors = self.remove_latex_content(authors)
         N_entry = 1  # default number of authors to use for the entry
         if len(format_args) != 0:
@@ -123,7 +123,7 @@ class KeyFormatter(object):
 
     def format_year_key(self, *format_args):
         """Generate formatted year key entry."""
-        year = self.bibtex_entry.fields['year']
+        year = self.bibtex_fields['year']
         # silently ignore additional format commands
         if len(format_args) == 0:
             format_args = "long"
@@ -141,7 +141,7 @@ class KeyFormatter(object):
 
     def format_journal_key(self, *format_args):
         """Generate formatted journal key entry."""
-        journal = self.bibtex_entry.fields['journal']
+        journal = self.bibtex_fields['journal']
         if len(format_args) != 0:
             if re.match(r"\d+", format_args[0]):
                 raise Exception("cannot define the number of words to use for "
@@ -157,7 +157,7 @@ class KeyFormatter(object):
 
     def format_title_key(self, *format_args):
         """Generate formatted title key entry."""
-        title = self.bibtex_entry.fields['title']
+        title = self.bibtex_fields['title']
         title = self.remove_latex_content(title)
         N_entry = 3  # default number of words to use for the entry
         if len(format_args) != 0:
