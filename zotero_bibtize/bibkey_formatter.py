@@ -13,6 +13,7 @@ class KeyGen(object):
         self.field_format_map = {
             'author': self.format_author_key,
             'year': self.format_year_key,
+            'journal': self.format_journal_key,
         }
 
     def generate_key_entry(self, key_format):
@@ -87,6 +88,24 @@ class KeyGen(object):
         curly_braces_regex = r"[\{\}]"
         return re.sub(curly_braces_regex, '', content_string).strip()
 
+    def remove_function_words(self, content_string):
+        """Remove all function words from the given string."""
+        # a list of function words as defined by JabRef
+        # (cf. https://docs.jabref.org/setup/bibtexkeypatterns)
+        function_words =  [
+            "a", "an", "the", "above", "about", "across", "against", "along", 
+            "among", "around", "at", "before", "behind", "below", "beneath", 
+            "beside", "between", "beyond", "by", "down", "during", "except", 
+            "for", "from", "in", "inside", "into", "like", "near", "of", "off", 
+            "on", "onto", "since", "to", "toward", "through", "under", "until",
+            "up", "upon", "with", "within", "without", "and", "but", "for", 
+            "nor", "or", "so", "yet"
+        ]
+        function_words_str = "".join(function_words)
+        function_words_str = function_words_str.replace('"', '').replace(', ', '|')
+        function_word_regex = r"(^|\s+)({})(\s+|$)".format(function_words_str)
+        return re.sub(function_word_regex, ' ', content_string).strip()
+
     def format_author_key(self, *format_args):
         """Generate formatted author key entry."""
         authors = self.bibtex_entry.fields['author']
@@ -122,6 +141,25 @@ class KeyGen(object):
             return year[2:]
         else:
             return year
+
+    def format_journal_key(self, *format_args):
+        """Generate formatted journal key entry."""
+        journal = self.bibtex_entry.fields['journal']
+        if len(format_args) != 0:
+            if re.match(r"\d+", format_args[0]):
+                raise Exception("cannot define the number of words to use for "
+                                "the journal key format")
+        journal = self.remove_latex_content(journal)
+        # this will also remove any whitespace from the string
+        journal = re.sub(r"[^[A-Za-z0-9\s]", '', journal)
+        journal = self.remove_function_words(journal)
+        journal_list = journal.split(' ')
+        for format_arg in format_args:
+            journal_list = self.apply_format_to_content(journal_list, 
+                                                        format_arg)    
+        return "".join(journal_list)
+        
+        
 
 
 #def format_year_key(bibtex_entry, N, *format_args):
