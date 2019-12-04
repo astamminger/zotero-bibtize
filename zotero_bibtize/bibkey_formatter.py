@@ -19,9 +19,11 @@ class KeyGen(object):
         """Generate a bibtex key according to the defined format."""
         format_list = self.unpack_format_entries(key_format)
         bibkey = key_format
-        for field, format_actions in format_list:
-            res = self.field_format_map[field](*format_actions)
-            print(res)
+        for ((field, format_actions), raw) in format_list:
+            formatted_key = self.field_format_map[field](*format_actions)
+            formatter = "[{}]".format(raw)
+            bibkey = bibkey.replace(formatter, formatted_key)
+            print(bibkey)
 
     def unpack_format_entries(self, key_format):
         """Extract the format entries from the total key_format string."""
@@ -31,7 +33,7 @@ class KeyGen(object):
         for format_entry in format_entries:
             entry_type, *format_actions = format_entry.split(':')
             format_list.append((entry_type, format_actions))
-        return format_list
+        return zip(format_list, format_entries)
         
     def apply_format_to_content(self, content, format_action):
         """ 
@@ -102,6 +104,24 @@ class KeyGen(object):
         for format_arg in format_args:
             author_list = self.apply_format_to_content(author_list, format_arg)    
         return "".join(author_list)
+
+    def format_year_key(self, *format_args):
+        """Generate formatted year key entry."""
+        year = self.bibtex_entry.fields['year']
+        # silently ignore additional format commands
+        if len(format_args) == 0:
+            format_args = "long"
+        else:
+            format_args = format_args[0]
+        # check if arguments are valid
+        if format_args not in ["long", "short"]:
+            raise Exception("unknown format argument {} for year (allowed "
+                            "arguments are 'short' or 'long')"
+                            .format(format_args))
+        if format_args == 'short':
+            return year[2:]
+        else:
+            return year
 
 
 #def format_year_key(bibtex_entry, N, *format_args):
