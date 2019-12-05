@@ -28,6 +28,9 @@ class KeyFormatter(object):
         """Extract the format entries from the total key_format string."""
         format_regex = r"\[(.*?)\]"
         format_entries = re.findall(format_regex, key_format)
+        if not format_entries:
+            raise Exception("no valid format entries found in defined key "
+                            "format '{}'".format(key_format))
         format_list = []
         for format_entry in format_entries:
             entry_type, *format_actions = format_entry.split(':')
