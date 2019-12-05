@@ -13,9 +13,7 @@ from zotero_bibtize import BibTexFile
                 required=False)
 @click.argument('output_file', type=click.Path(exists=False), default='.', 
                 required=False)
-@click.option('--key-format', type=str, 
-              default="[author:capitalize][journal:capitalize:abbreviate][year]",
-              required=False, 
+@click.option('--key-format', required=False, default=None,
               help=("Format key to generate custom bibtex keys, for instance "
                     "[author:capitalize][journal:capitalize:abbreviate][year]"))
 def zotero_bibtize(input_file, output_file, key_format):

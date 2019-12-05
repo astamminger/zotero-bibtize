@@ -8,12 +8,15 @@ from zotero_bibtize.bibkey_formatter import KeyFormatter
 
 
 class BibEntry(object):
-    def __init__(self, bibtex_entry_string, key_format):
+    def __init__(self, bibtex_entry_string, key_format=None):
         self._raw = bibtex_entry_string
         entry_type, entry_key, entry_fields = self.entry_fields(self._raw)
         # set internal variables
         self.type = entry_type
-        self.key = KeyFormatter(entry_fields).generate_key(key_format)
+        if key_format is not None:
+            self.key = KeyFormatter(entry_fields).generate_key(key_format)
+        else:
+            self.key = entry_key
         self.fields = entry_fields
         
     def entry_fields(self, bibtex_entry_string):
@@ -105,12 +108,12 @@ class BibEntry(object):
 
 class BibTexFile(object):
     """Bibtext file contents"""
-    def __init__(self, bibtex_file, key_format):
+    def __init__(self, bibtex_file, key_format=None):
         self.bibtex_file = bibtex_file
         self.entries = []
         self.key_map = collections.defaultdict(list)
         for (index, entry) in enumerate(self.parse_bibtex_entries()):
-            entry = BibEntry(entry, key_format)
+            entry = BibEntry(entry, key_format=key_format)
             self.entries.append(entry)
             self.key_map[entry.key].append(index)
         self.resolve_unambiguous_keys()
