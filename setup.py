@@ -12,7 +12,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name="zotero-bibtize",
-    version="0.0.1",
+    version="0.1.0",
     author="Andreas Stamminger",
     author_email="stammingera@gmail.com",
     description="Transform Zotero BibTex files to LaTeX friendly representation.",
