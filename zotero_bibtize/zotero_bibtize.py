@@ -103,7 +103,7 @@ class BibEntry(object):
         content = ['@{}{{{}'.format(self.type, self.key)]
         for (field_key, field_content) in self.fields.items():
             content.append('    {} = {{{}}}'.format(field_key, field_content))
-        return "\n".join(content) + '\n}\n'
+        return ",\n".join(content) + '\n}\n'
 
 
 class BibTexFile(object):
