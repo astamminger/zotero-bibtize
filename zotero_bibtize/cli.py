@@ -13,7 +13,10 @@ from zotero_bibtize import BibTexFile
                 required=False)
 @click.argument('output_file', type=click.Path(exists=False), default='.', 
                 required=False)
-def zotero_bibtize(input_file, output_file):
+@click.option('--key-format', required=False, default=None,
+              help=("Format key to generate custom bibtex keys, for instance "
+                    "[author:capitalize][journal:capitalize:abbreviate][year]"))
+def zotero_bibtize(input_file, output_file, key_format):
     """
     Transform Zotero BibTex files to LaTeX friendly representation.
 
@@ -48,6 +51,6 @@ def zotero_bibtize(input_file, output_file):
             shutil.copyfile(bib_in, bib_backup)
         bib_out = output_path
     # read in and write processed contents back  
-    bibliography = BibTexFile(str(bib_in))
+    bibliography = BibTexFile(str(bib_in), key_format)
     with open(bib_out, 'w') as bib_out_file:
         bib_out_file.write(''.join(map(str, bibliography.entries)))
