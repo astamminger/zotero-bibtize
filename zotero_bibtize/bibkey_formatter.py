@@ -90,7 +90,7 @@ class KeyFormatter(object):
         """Remove all function words from the given string."""
         # a list of function words as defined by JabRef
         # (cf. https://docs.jabref.org/setup/bibtexkeypatterns)
-        function_words =  [
+        function_words_list =  [
             "a", "an", "the", "above", "about", "across", "against", "along", 
             "among", "around", "at", "before", "behind", "below", "beneath", 
             "beside", "between", "beyond", "by", "down", "during", "except", 
@@ -99,10 +99,13 @@ class KeyFormatter(object):
             "up", "upon", "with", "within", "without", "and", "but", "for", 
             "nor", "or", "so", "yet"
         ]
-        function_words_str = "".join(function_words)
-        function_words_str = function_words_str.replace('"', '').replace(', ', '|')
-        function_word_regex = r"(^|\s+)({})(\s+|$)".format(function_words_str)
-        return re.sub(function_word_regex, ' ', content_string).strip()
+        # join single words with regex 'or' operator
+        function_words = "|".join(function_words_list)
+        word_regex = r"(?:^|(?<=\s))({})(?:(?=\s)|$)".format(function_words)
+        content_string = re.sub(word_regex, '', content_string).strip()
+        # remove consecutive whitespaces
+        content_string = re.sub(r"\s+", " ", content_string)
+        return content_string
 
     def format_author_key(self, *format_args):
         """Generate formatted author key entry."""
