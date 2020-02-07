@@ -123,8 +123,13 @@ class KeyFormatter(object):
                                         for lastname in author.split(',')[:1]] 
         # do not use more than N_entry author names for the entry
         author_list = author_list[:N_entry]
+        # before applying the format split author names at empty spaces such
+        # that a prefixed name (for instance 'Van Hove') is treated properly
+        author_list = [entry for author in author_list 
+                             for entry in author.split(" ")]
         for format_arg in format_args:
             author_list = self.apply_format_to_content(author_list, format_arg)    
+        
         return "".join(author_list)
 
     def format_year_key(self, *format_args):
