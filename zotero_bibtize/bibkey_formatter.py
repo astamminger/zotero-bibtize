@@ -113,7 +113,7 @@ class KeyFormatter(object):
 
     def format_author_key(self, *format_args):
         """Generate formatted author key entry."""
-        authors = self.bibtex_fields.get('author', 'None')
+        authors = self.bibtex_fields.get('author', 'No Name')
         authors = self.remove_latex_content(authors)
         N_entry = 1  # default number of authors to use for the entry
         if len(format_args) != 0:
