@@ -70,7 +70,7 @@ class KeyFormatter(object):
         In this case only the latex command will be removed, i.e. a command
         of the form \command{content} will be replaced by {content}
         """
-        latex_command_regex = r"(\\[^\{]+)\{"
+        latex_command_regex = r"(?:\\[^\{]+)"
         return re.sub(latex_command_regex, '', content_string).strip()
 
     def remove_math_environments(self, content_string):
