@@ -105,7 +105,7 @@ class KeyFormatter(object):
         ]
         # join single words with regex 'or' operator
         function_words = "|".join(function_words_list)
-        word_regex = r"(?:^|(?<=\s))({})(?:(?=\s)|$)".format(function_words)
+        word_regex = r"(?i)(?:^|(?<=\s))({})(?:(?=\s)|$)".format(function_words)
         content_string = re.sub(word_regex, '', content_string).strip()
         # remove consecutive whitespaces
         content_string = re.sub(r"\s+", " ", content_string)
