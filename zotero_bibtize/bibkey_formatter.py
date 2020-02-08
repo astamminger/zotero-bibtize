@@ -60,6 +60,7 @@ class KeyFormatter(object):
         content_string = self.remove_math_environments(content_string)
         content_string = self.remove_latex_commands(content_string)
         content_string = self.remove_curly_braces(content_string)
+        content_string = re.sub(r"\s+", " ", content_string)
         return content_string
 
     def remove_latex_commands(self, content_string):
