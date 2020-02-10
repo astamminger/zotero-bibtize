@@ -35,7 +35,7 @@ class BibEntry(object):
         field, count = re.subn(r'^(\s*)|(\s*)$', '', field)
         # needs a separate expression for matching months which are
         # not exported with surrounding braces...
-        regex = r'^([\s\S]*)\s+\=\s+(?:\{([\s\S]*)\}|([\s\S]*)),*?$'
+        regex = r'^([\s\S]*?)\s+\=\s+(?:\{([\s\S]*)\}|([\s\S]*)),*?$'
         fmatch = re.match(regex, field)
         field_key = fmatch.group(1)
         field_content = fmatch.group(2) or fmatch.group(3)
