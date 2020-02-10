@@ -49,6 +49,11 @@ class BibEntry(object):
         entry_match = re.match(r'^\@([\s\S]*?)\{([\s\S]*?)\}$', unescaped)
         entry_type = entry_match.group(1)
         entry_content =  re.split(',\n', entry_match.group(2))
+        # if the last field entry is followed by a comma the last entry
+        # in the list will be '' which will lead to issued further
+        # upstream, thus we check here and remove an emtpy entry
+        if not entry_content[-1]:
+            entry_content = entry_content[:-1]
         # return type, original zotero key and the actual content list 
         return (entry_type, entry_content[0], entry_content[1:])
 
@@ -113,9 +118,9 @@ class BibTexFile(object):
         self.entries = []
         self.key_map = collections.defaultdict(list)
         for (index, entry) in enumerate(self.parse_bibtex_entries()):
-            entry = BibEntry(entry, key_format=key_format)
-            self.entries.append(entry)
-            self.key_map[entry.key].append(index)
+            bibentry = BibEntry(entry, key_format=key_format)
+            self.entries.append(bibentry)
+            self.key_map[bibentry.key].append(index)
         self.resolve_unambiguous_keys()
 
     def parse_bibtex_entries(self):
@@ -144,7 +149,11 @@ class BibTexFile(object):
             if char == '{':
                 stack = 1
                 while stack != 0:
-                    next_index, next_char = next(content_iterator)
+                    try:
+                        next_index, next_char = next(content_iterator)
+                    except StopIteration:
+                        raise Exception("Unbalanced braces error during the "
+                                        "parsing of entry {}".format(content))
                     if next_char == '}':
                         stack -= 1
                     elif next_char == '{':
