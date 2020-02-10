@@ -1,7 +1,7 @@
 """
 Test suite for BibKey formatting sequences.
 
-Tests the generation of key contents based on the journal entry
+Tests the generation of key contents based on the title
 """
 
 from zotero_bibtize.bibkey_formatter import KeyFormatter
@@ -12,7 +12,11 @@ from zotero_bibtize.bibkey_formatter import KeyFormatter
 def test_no_journal_lower():
     key_formatter = KeyFormatter({})
     key_format = '[journal:lower]'
-    assert key_formatter.generate_key(key_format) == 'noname'
+    assert key_formatter.generate_key(key_format) == 'nojournal'
+    journal = "Chemistry of Materials"
+    key_formatter = KeyFormatter({"journal": journal})
+    key_format = '[journal:lower]'
+    assert key_formatter.generate_key(key_format) == 'chemistrymaterials'
 
 
 #
@@ -21,7 +25,11 @@ def test_no_journal_lower():
 def test_no_journal_upper():
     key_formatter = KeyFormatter({})
     key_format = '[journal:upper]'
-    assert key_formatter.generate_key(key_format) == 'NONAME'
+    assert key_formatter.generate_key(key_format) == 'NOJOURNAL'
+    journal = "Chemistry of Materials"
+    key_formatter = KeyFormatter({"journal": journal})
+    key_format = '[journal:upper]'
+    assert key_formatter.generate_key(key_format) == 'CHEMISTRYMATERIALS'
 
 
 #
@@ -30,7 +38,11 @@ def test_no_journal_upper():
 def test_no_journal_capitalize():
     key_formatter = KeyFormatter({})
     key_format = '[journal:capitalize]'
-    assert key_formatter.generate_key(key_format) == 'NoName'
+    assert key_formatter.generate_key(key_format) == 'NoJournal'
+    journal = "Chemistry of Materials"
+    key_formatter = KeyFormatter({"journal": journal})
+    key_format = '[journal:capitalize]'
+    assert key_formatter.generate_key(key_format) == 'ChemistryMaterials'
 
 
 #
@@ -39,7 +51,11 @@ def test_no_journal_capitalize():
 def test_no_journal_abbreviate():
     key_formatter = KeyFormatter({})
     key_format = '[journal:abbreviate]'
-    assert key_formatter.generate_key(key_format) == 'NN'
+    assert key_formatter.generate_key(key_format) == 'NJ'
     key_formatter = KeyFormatter({})
     key_format = '[journal:abbr]'
-    assert key_formatter.generate_key(key_format) == 'NN'
+    assert key_formatter.generate_key(key_format) == 'NJ'
+    journal = "Chemistry of Materials"
+    key_formatter = KeyFormatter({"journal": journal})
+    key_format = '[journal:abbreviate]'
+    assert key_formatter.generate_key(key_format) == 'CM'
