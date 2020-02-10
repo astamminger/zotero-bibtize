@@ -68,9 +68,9 @@ class KeyFormatter(object):
         Remove latex commands from the given string.
     
         In this case only the latex command will be removed, i.e. a command
-        of the form \command{content} will be replaced by {content}
+        of the form \\command{content} will be replaced by {content}
         """
-        latex_command_regex = r"(\\[^\{]+)\{"
+        latex_command_regex = r"(?:\\[^\{]+)"
         return re.sub(latex_command_regex, '', content_string).strip()
 
     def remove_math_environments(self, content_string):
@@ -105,7 +105,7 @@ class KeyFormatter(object):
         ]
         # join single words with regex 'or' operator
         function_words = "|".join(function_words_list)
-        word_regex = r"(?:^|(?<=\s))({})(?:(?=\s)|$)".format(function_words)
+        word_regex = r"(?i)(?:^|(?<=\s))({})(?:(?=\s)|$)".format(function_words)
         content_string = re.sub(word_regex, '', content_string).strip()
         # remove consecutive whitespaces
         content_string = re.sub(r"\s+", " ", content_string)
@@ -113,7 +113,7 @@ class KeyFormatter(object):
 
     def format_author_key(self, *format_args):
         """Generate formatted author key entry."""
-        authors = self.bibtex_fields.get('author', 'None')
+        authors = self.bibtex_fields.get('author', 'No Name')
         authors = self.remove_latex_content(authors)
         N_entry = 1  # default number of authors to use for the entry
         if len(format_args) != 0:
@@ -153,7 +153,7 @@ class KeyFormatter(object):
 
     def format_journal_key(self, *format_args):
         """Generate formatted journal key entry."""
-        journal = self.bibtex_fields.get('journal', 'None')
+        journal = self.bibtex_fields.get('journal', 'No Journal')
         if len(format_args) != 0:
             if re.match(r"\d+", format_args[0]):
                 raise Exception("cannot define the number of words to use for "
@@ -169,7 +169,7 @@ class KeyFormatter(object):
 
     def format_title_key(self, *format_args):
         """Generate formatted title key entry."""
-        title = self.bibtex_fields.get('title', 'None')
+        title = self.bibtex_fields.get('title', 'No Title')
         title = self.remove_latex_content(title)
         N_entry = 3  # default number of words to use for the entry
         if len(format_args) != 0:
