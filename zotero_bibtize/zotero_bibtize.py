@@ -23,8 +23,11 @@ class BibEntry(object):
         """Disassemble the bibtex entry contents."""
         # revert zotero escaping
         etype, ekey, econtent = self.bibtex_entry_contents(bibtex_entry_string)
-        # disassemble the field entries
-        fields = {}
+        # disassemble the field entries (use ordered dict to assure output
+        # order matches the input order for python versions < 3.6, this is not
+        # of practical importance for generated bib-files but allows for 
+        # easier tests based on file comparison)
+        fields = collections.OrderedDict()
         for field in econtent:
             key, content = self.field_label_and_contents(field)
             fields[key] = content

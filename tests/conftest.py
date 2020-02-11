@@ -38,7 +38,7 @@ def tempcwd(tempfolder):
     import pathlib
     initial_cwd = os.getcwd()
     # change current working directory to the temporary folder
-    os.chdir(tempfolder)
+    os.chdir(str(tempfolder))
     yield tempfolder
     # change back to the original cwd after test has finished
     os.chdir(initial_cwd)
