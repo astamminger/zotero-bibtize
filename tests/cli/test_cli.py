@@ -47,9 +47,7 @@ def test_call_without_outfile(tempcwd, zotero_testfile, wanted_testfile,
     # finally compare processed result match wanted results
     content_processed = open(str(processed_file), 'r').read()
     content_wanted = open(str(wanted_testfile), 'r').read()
-    print(content_processed)
-    print(content_wanted)
-#    assert content_processed == content_wanted
+    assert content_processed == content_wanted
 
 
 def test_call_with_outfile(tempcwd, zotero_testfile, wanted_testfile, 
