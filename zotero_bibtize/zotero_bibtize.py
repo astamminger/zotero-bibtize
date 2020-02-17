@@ -8,7 +8,11 @@ from zotero_bibtize.bibkey_formatter import KeyFormatter
 
 
 class BibEntry(object):
-    def __init__(self, bibtex_entry_string, key_format=None):
+    def __init__(self, bibtex_entry_string, key_format=None, omit_fields=None):
+        # check for fields not required
+        self.fields_to_omit = []
+        if omit_fields is not None:
+            self.fields_to_omit = omit_fields.split(',')
         self._raw = bibtex_entry_string
         entry_type, entry_key, entry_fields = self.entry_fields(self._raw)
         # set internal variables
@@ -27,6 +31,8 @@ class BibEntry(object):
         fields = {}
         for field in econtent:
             key, content = self.field_label_and_contents(field)
+            # skip if field was set to be omitted
+            if key in self.fields_to_omit: continue 
             fields[key] = content
         return etype, ekey, fields
 
@@ -113,12 +119,13 @@ class BibEntry(object):
 
 class BibTexFile(object):
     """Bibtext file contents"""
-    def __init__(self, bibtex_file, key_format=None):
+    def __init__(self, bibtex_file, key_format=None, omit_fields=None):
         self.bibtex_file = bibtex_file
         self.entries = []
         self.key_map = collections.defaultdict(list)
         for (index, entry) in enumerate(self.parse_bibtex_entries()):
-            bibentry = BibEntry(entry, key_format=key_format)
+            bibentry = BibEntry(entry, key_format=key_format, 
+                                omit_fields=omit_fields)
             self.entries.append(bibentry)
             self.key_map[bibentry.key].append(index)
         self.resolve_unambiguous_keys()
