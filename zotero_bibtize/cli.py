@@ -57,5 +57,5 @@ def zotero_bibtize(input_file, output_file, key_format, omit_fields):
         bib_out = output_path
     # read in and write processed contents back
     bibliography = BibTexFile(str(bib_in), key_format, omit_fields)
-    with open(bib_out, 'w') as bib_out_file:
+    with open(str(bib_out), 'w') as bib_out_file:
         bib_out_file.write(''.join(map(str, bibliography.entries)))
