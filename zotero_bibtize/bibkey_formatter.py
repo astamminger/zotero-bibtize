@@ -90,10 +90,10 @@ class KeyFormatter(object):
         curly_braces_regex = r"[\{\}]"
         return re.sub(curly_braces_regex, '', content_string).strip()
 
-    def remove_function_words(self, content_string):
+    def remove_function_words(self, content_string, is_journal=False):
         """Remove all function words from the given string."""
         # a list of function words as defined by JabRef
-        # (cf. https://docs.jabref.org/setup/bibtexkeypatterns)
+        # (cf. https://docs.jabref.org/setup/bibtexkeypatterns)=False
         function_words_list =  [
             "a", "an", "the", "above", "about", "across", "against", "along", 
             "among", "around", "at", "before", "behind", "below", "beneath", 
@@ -106,6 +106,11 @@ class KeyFormatter(object):
         # join single words with regex 'or' operator
         function_words = "|".join(function_words_list)
         word_regex = r"(?i)(?:^|(?<=\s))({})(?:(?=\s)|$)".format(function_words)
+        # for journals do not match at the end of the string which would remove
+        # 'A' from journal names like Journal of Materials Chemistry A or
+        # Physical Review A
+        if is_journal:
+            word_regex = r"(?i)(?:^|(?<=\s))({})(?:(?=\s))".format(function_words)
         content_string = re.sub(word_regex, '', content_string).strip()
         # remove consecutive whitespaces
         content_string = re.sub(r"\s+", " ", content_string)
@@ -160,7 +165,7 @@ class KeyFormatter(object):
                                 "the journal key format")
         journal = self.remove_latex_content(journal)
         journal = re.sub(r"[^[A-Za-z0-9\s]", '', journal)
-        journal = self.remove_function_words(journal)
+        journal = self.remove_function_words(journal, is_journal=True)
         journal_list = journal.split(' ')
         for format_arg in format_args:
             journal_list = self.apply_format_to_content(journal_list, 

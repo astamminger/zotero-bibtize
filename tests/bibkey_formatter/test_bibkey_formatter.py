@@ -113,3 +113,25 @@ def test_function_words_removal():
     expected_string = (r"climbing image nudged elastic band method "
                         "finding saddle points minimum energy paths")
     assert title == expected_string
+
+
+def test_function_words_removal_for_journals():
+    """
+    For Journals function keys should not match at the end of strings to
+    preserve 'A' in journal names like Journal of Materials Chemistry A
+    or Physical Review A, etc.
+    """
+    key_formatter = KeyFormatter({})
+    journal_string = "Journal of Materials Chemistry A"
+    # test behavior if is_journal is not set
+    string_no_journal = key_formatter.remove_function_words(journal_string)
+    assert string_no_journal == "Journal Materials Chemistry"
+    # test behavior if is_journal is set
+    string_is_journal = key_formatter.remove_function_words(journal_string,
+                                                            is_journal=True)
+    assert string_is_journal == "Journal Materials Chemistry A"
+    # assert 'a' inside the journal name is removed
+    journal_string = "Chemistry A European Journal"
+    string_is_journal = key_formatter.remove_function_words(journal_string,
+                                                            is_journal=True)
+    assert string_is_journal == "Chemistry European Journal"
