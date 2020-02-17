@@ -48,14 +48,14 @@ def zotero_bibtize(input_file, output_file, key_format, omit_fields):
     output_path = pathlib.Path(output_file).absolute()
     bib_backup = bib_in.with_name('.' + bib_in.name).with_suffix('.bib.orig')
     if output_path.is_dir():
-        shutil.copyfile(bib_in, bib_backup)
+        shutil.copyfile(str(bib_in), str(bib_backup))
         bib_out = bib_in
     else:  # output_path.is_file()
         # check if the same file is specified and backup if yes
         if output_path == input_path:
-            shutil.copyfile(bib_in, bib_backup)
+            shutil.copyfile(str(bib_in), str(bib_backup))
         bib_out = output_path
-    # read in and write processed contents back  
+    # read in and write processed contents back
     bibliography = BibTexFile(str(bib_in), key_format, omit_fields)
     with open(bib_out, 'w') as bib_out_file:
         bib_out_file.write(''.join(map(str, bibliography.entries)))
