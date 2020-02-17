@@ -182,6 +182,34 @@ def test_field_label_and_contents(empty_bibentry):
     field, content = empty_bibentry.field_label_and_contents(test_string)
     assert field == wanted_field_name
     assert content == wanted_field_content
+
+
+def test_ignore_custom_fields():
+    from zotero_bibtize.zotero_bibtize import BibEntry
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "    field1 = {contents of field 1},",
+        "    field2 = {contents of field 2},",
+        "    field3 = {¢ontents of field 3}",
+        "}",
+        "",  # account for additional newline to separate entries
+    )
+    input_entry = "\n".join(input_entry)
+    # check for one field
+    ignore_fields = "field1"
+    bibentry = BibEntry(input_entry, omit_fields=ignore_fields)
+    assert "field1" not in bibentry.fields.keys()
+    assert "field2" in bibentry.fields.keys()
+    assert "field3" in bibentry.fields.keys()
+    # check for multiple fields
+    ignore_fields = "field1,field3"  # string defined by CLI
+    bibentry = BibEntry(input_entry, omit_fields=ignore_fields)
+    assert "field1" not in bibentry.fields.keys()
+    assert "field1" not in bibentry.fields.keys()
+    assert "field2" in bibentry.fields.keys()
+    
+
+
     
 
 

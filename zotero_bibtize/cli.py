@@ -16,7 +16,12 @@ from zotero_bibtize import BibTexFile
 @click.option('--key-format', required=False, default=None,
               help=("Format key to generate custom bibtex keys, for instance "
                     "[author:capitalize][journal:capitalize:abbreviate][year]"))
-def zotero_bibtize(input_file, output_file, key_format):
+@click.option('--omit-fields', required=False, default=None,
+              help=("Define a list of BibTex fields as comma separated list, "
+                    "i.e. field1,field2,field3,..., that will not be written "
+                    "to the output file"))
+            
+def zotero_bibtize(input_file, output_file, key_format, omit_fields):
     """
     Transform Zotero BibTex files to LaTeX friendly representation.
 
@@ -50,7 +55,7 @@ def zotero_bibtize(input_file, output_file, key_format):
         if output_path == input_path:
             shutil.copyfile(str(bib_in), str(bib_backup))
         bib_out = output_path
-    # read in and write processed contents back  
-    bibliography = BibTexFile(str(bib_in), key_format)
+    # read in and write processed contents back
+    bibliography = BibTexFile(str(bib_in), key_format, omit_fields)
     with open(str(bib_out), 'w') as bib_out_file:
         bib_out_file.write(''.join(map(str, bibliography.entries)))
