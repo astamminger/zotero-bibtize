@@ -190,7 +190,7 @@ def test_ignore_custom_fields():
         "@bibtextype{bibkey,",
         "    field1 = {contents of field 1},",
         "    field2 = {contents of field 2},",
-        "    field3 = {¢ontents of field 3}",
+        "    field3 = {contents of field 3}",
         "}",
         "",  # account for additional newline to separate entries
     )
@@ -207,11 +207,43 @@ def test_ignore_custom_fields():
     assert "field1" not in bibentry.fields.keys()
     assert "field1" not in bibentry.fields.keys()
     assert "field2" in bibentry.fields.keys()
-    
 
+def test_fields_containing_equal_signs():
+    from zotero_bibtize.zotero_bibtize import BibEntry
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "    field1 = {has no equal sign},",
+        "    field2 = {contains an = sign},",
+        "    field3 = {has no equal sign},",
+        "}",
+        "",  # account for additional newline to separate entries
+    )
+    input_entry = "\n".join(input_entry)
+    bibentry = BibEntry(input_entry)
+    assert bibentry.fields['field1'] == "has no equal sign"
+    assert bibentry.fields['field2'] == "contains an = sign"
+    assert bibentry.fields['field3'] == "has no equal sign"
 
-    
+def test_multiple_replacement_of_capitalized():
+    """
+    Test multiple latex commands are not replaced multiple times.
 
-
-# add test for entries which contain equal signs, i.e. 
-# fieldname = {field content containes A = B equal signs.}
+    In case of latex comands with capitalized contents constructs like
+    \\ce{{Li4P2S6}} can occur. Along with a second entry of the form
+    {Li4P2S6} in the entry the command would be replaced twice leading
+    to outputs of the form \\ceLi4P2S6
+    """
+    from zotero_bibtize.zotero_bibtize import BibEntry
+    # setup entry with fields containing multiple recurring capitalized
+    # words (i.e. embraced by curly braces)
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "    field1 = {Has \\ce{{Command}}},",
+        "    field2 = {Has same \\ce{{Command}}}",
+        "}",
+        "",
+    )
+    input_entry = "\n".join(input_entry)
+    bibentry = BibEntry(input_entry)
+    assert bibentry.fields['field1'] == "Has \\ce{Command}"
+    assert bibentry.fields['field2'] == "Has same \\ce{Command}"
