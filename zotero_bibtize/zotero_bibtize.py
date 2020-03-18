@@ -18,7 +18,8 @@ class BibEntry(object):
         # set internal variables
         self.type = entry_type
         if key_format is not None:
-            self.key = KeyFormatter(entry_fields).generate_key(key_format)
+            key_formatter = KeyFormatter(entry_fields, entry_type=entry_type)
+            self.key = key_formatter.generate_key(key_format)
         else:
             self.key = entry_key
         self.fields = entry_fields

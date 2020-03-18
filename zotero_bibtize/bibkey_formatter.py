@@ -5,7 +5,7 @@ import re
 
 
 class KeyFormatter(object):
-    def __init__(self, bibtex_fields):
+    def __init__(self, bibtex_fields, entry_type=None):
         self.bibtex_fields = bibtex_fields
         self.field_format_map = {
             'author': self.format_author_key,
