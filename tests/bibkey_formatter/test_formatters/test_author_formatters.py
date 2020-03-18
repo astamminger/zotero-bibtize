@@ -200,3 +200,11 @@ def test_missing_author():
     authors = '' 
     key_formatter = KeyFormatter({'author': authors, 'editor': editors})
     assert key_formatter.generate_key(key_format) == 'NoName'
+
+
+def test_author_list_split_for_name_containing_and():
+    """Test that author lists are only split at and that is not part of a name"""
+    key_format = '[author]'
+    authors = 'Ackland, G. J. and Bacon, D. J. and Calder, A. F.'
+    key_formatter = KeyFormatter({'author': authors})
+    assert key_formatter.generate_key(key_format) == 'Ackland'
