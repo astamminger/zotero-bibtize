@@ -109,7 +109,8 @@ class BibEntry(object):
         # next remove the implicit curly braces around capitalized words
         regex = r"\{[A-Z][\w]*?\}"
         words = re.findall(regex, entry)
-        for word in words:
+        # use set(words) to prevent double replacements
+        for word in set(words):
             entry = entry.replace(word, word.lstrip("{").rstrip("}"))
         return entry
 
