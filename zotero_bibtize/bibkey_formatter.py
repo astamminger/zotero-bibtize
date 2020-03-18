@@ -6,6 +6,7 @@ import re
 
 class KeyFormatter(object):
     def __init__(self, bibtex_fields, entry_type=None):
+        self.bibtex_entry_type = entry_type
         self.bibtex_fields = bibtex_fields
         self.field_format_map = {
             'author': self.format_author_key,
@@ -118,7 +119,11 @@ class KeyFormatter(object):
 
     def format_author_key(self, *format_args):
         """Generate formatted author key entry."""
-        authors = self.bibtex_fields.get('author', 'No Name')
+        authors = self.bibtex_fields.get('author', '')
+        if not authors:  # use editors if no authors present
+            authors = self.bibtex_fields.get('editor', '')
+        if not authors:  # fallback to no name if nothing given
+            authors = 'No Name'
         authors = self.remove_latex_content(authors)
         N_entry = 1  # default number of authors to use for the entry
         if len(format_args) != 0:
@@ -158,6 +163,10 @@ class KeyFormatter(object):
 
     def format_journal_key(self, *format_args):
         """Generate formatted journal key entry."""
+        # entry types for which journal names are ignored
+        no_journal = ['incollection', 'book']
+        if self.bibtex_entry_type in no_journal:
+            return ''
         journal = self.bibtex_fields.get('journal', 'No Journal')
         if len(format_args) != 0:
             if re.match(r"\d+", format_args[0]):
