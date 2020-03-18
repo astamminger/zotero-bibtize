@@ -59,3 +59,14 @@ def test_no_journal_abbreviate():
     key_formatter = KeyFormatter({"journal": journal})
     key_format = '[journal:abbreviate]'
     assert key_formatter.generate_key(key_format) == 'CM'
+
+
+def test_omit_no_journal_if_book():
+    """
+    Check that journal is not replaced with 'No Journal' in books and
+    book sections
+    """
+    key_formatter = KeyFormatter({}, entry_type='incollection')
+    key_format = '[journal:abbreviate]'
+    assert key_formatter.generate_key(key_format) == ''
+    
