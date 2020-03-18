@@ -239,11 +239,11 @@ def test_multiple_replacement_of_capitalized():
     input_entry = (
         "@bibtextype{bibkey,",
         "    field1 = {Has \\ce{{Command}}},",
-        "    field2 = {Has same \\ce{{Command}}}",
+        "    field2 = {Has same word {Command}}",
         "}",
         "",
     )
     input_entry = "\n".join(input_entry)
     bibentry = BibEntry(input_entry)
     assert bibentry.fields['field1'] == "Has \\ce{Command}"
-    assert bibentry.fields['field2'] == "Has same \\ce{Command}"
+    assert bibentry.fields['field2'] == "Has same word Command"
