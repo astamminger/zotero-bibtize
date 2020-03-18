@@ -130,7 +130,7 @@ class KeyFormatter(object):
             if re.match(r"\d+", format_args[0]):
                 N_entry = int(format_args[0])
                 format_args = format_args[1:]
-        author_list = [lastname.strip() for author in authors.split('and') 
+        author_list = [lastname.strip() for author in re.split(r'\b(?:and)\b', authors) 
                                         for lastname in author.split(',')[:1]] 
         # do not use more than N_entry author names for the entry
         author_list = author_list[:N_entry]
