@@ -66,7 +66,16 @@ def test_omit_no_journal_if_book():
     Check that journal is not replaced with 'No Journal' in books and
     book sections
     """
+    # check for book sections
     key_formatter = KeyFormatter({}, entry_type='incollection')
     key_format = '[journal:abbreviate]'
     assert key_formatter.generate_key(key_format) == ''
+    # check for book
+    key_formatter = KeyFormatter({}, entry_type='book')
+    key_format = '[journal:abbreviate]'
+    assert key_formatter.generate_key(key_format) == ''
+    # check for all other cases
+    key_formatter = KeyFormatter({}, entry_type=None)
+    key_format = '[journal:abbreviate]'
+    assert key_formatter.generate_key(key_format) == 'NJ'
     

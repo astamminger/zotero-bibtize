@@ -184,8 +184,19 @@ def test_multi_author_abbreviate():
 
 def test_missing_author():
     """Test editor is used if author is missing"""
+    key_format = '[author]'
+    # check that editor is used if author not present
     editors = 'Surname, Firstname and Prefix Surname, Firstname'
     authors = '' 
     key_formatter = KeyFormatter({'author': authors, 'editor': editors})
-    key_format = '[author]'
     assert key_formatter.generate_key(key_format) == 'Surname'
+    # check authors take precedence over editors
+    editors = 'Editor, Firstname and Prefix Author, Firstname'
+    authors = 'Author, Firstname and Prefix Author, Firstname'
+    key_formatter = KeyFormatter({'author': authors, 'editor': editors})
+    assert key_formatter.generate_key(key_format) == 'Author'
+    # check No Name author is used if none is present
+    editors = ''
+    authors = '' 
+    key_formatter = KeyFormatter({'author': authors, 'editor': editors})
+    assert key_formatter.generate_key(key_format) == 'NoName'
