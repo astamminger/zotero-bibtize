@@ -164,7 +164,7 @@ class KeyFormatter(object):
     def format_journal_key(self, *format_args):
         """Generate formatted journal key entry."""
         # entry types for which journal names are ignored
-        no_journal = ['incollection', 'book']
+        no_journal = ['incollection', 'book', 'misc']
         if self.bibtex_entry_type in no_journal:
             return ''
         journal = self.bibtex_fields.get('journal', 'No Journal')
