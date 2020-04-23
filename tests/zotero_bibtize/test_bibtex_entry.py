@@ -81,9 +81,7 @@ bibtex_entry_types = [
 @pytest.mark.parametrize(('bibtex_entry_type'), bibtex_entry_types)
 def test_entry_type_is_recognized(bibtex_entry_type):
     from zotero_bibtize.zotero_bibtize import BibEntry
-    #entry_string = (r"@{:}{{key,{{field = {{}}}}"
-    #                .format(bibtex_entry_type))
-    entry_string = r"@{:}{{key,{{}}".format(bibtex_entry_type)
+    entry_string = r"@{:}{{key,}}".format(bibtex_entry_type)
     bibentry = BibEntry(entry_string)
     # check parsed type matches wanted type
     assert bibentry.type == bibtex_entry_type
@@ -238,8 +236,8 @@ def test_multiple_replacement_of_capitalized():
     # words (i.e. embraced by curly braces)
     input_entry = (
         "@bibtextype{bibkey,",
-        "    field1 = {Has \\ce{{Command}}},",
-        "    field2 = {Has same word {Command}}",
+        "   field1 = {Has \\ce{{Command}}},",
+        "   field2 = {Has same word {Command}}",
         "}",
         "",
     )
@@ -247,3 +245,29 @@ def test_multiple_replacement_of_capitalized():
     bibentry = BibEntry(input_entry)
     assert bibentry.fields['field1'] == "Has \\ce{Command}"
     assert bibentry.fields['field2'] == "Has same word Command"
+
+
+def test_splitting_for_containing_termination_sequence():
+    """
+    Regression test for Issue #18
+    https://github.com/astamminger/zotero-bibtize/issues/18
+    """
+    from zotero_bibtize.zotero_bibtize import BibEntry
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "   field1 = {Regular Field Without Newlines},",
+        "   field2 = {Field containing,\n termination sequence}",
+        "}",
+        "",
+    )
+    input_entry = "\n".join(input_entry)
+    bibentry = BibEntry(input_entry)
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "   field1 = {Regular Field Without Newlines},",
+        "   field2 = {Field {containing},\n termination sequence}",
+        "}",
+        "",
+    )
+    input_entry = "\n".join(input_entry)
+    bibentry = BibEntry(input_entry)

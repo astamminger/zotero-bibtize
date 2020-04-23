@@ -57,11 +57,24 @@ class BibEntry(object):
         unescaped = self.unescape_bibtex_entry_string(raw_entry_string)
         unescaped = re.sub(r'^(\s*)|(\s*)$', '', unescaped)
         entry_match = re.match(r'^\@([\s\S]*?)\{([\s\S]*?)\}$', unescaped)
-        entry_type = entry_match.group(1)
-        entry_content =  re.split(',\n', entry_match.group(2))
-        # if the last field entry is followed by a comma the last entry
-        # in the list will be '' which will lead to issued further
-        # upstream, thus we check here and remove an emtpy entry
+        entry_type, entry_content = entry_match.group(1, 2)
+        # check if the unescaped bibtex entry is valid
+        if not self._is_balanced(entry_content):
+            raise Exception("Found braces unbalanced after unescaping of "
+                            "BibTeX entry. The offending entry was\n\n"
+                            "{}".format(raw_entry_string))
+        entry_content = []
+        tmp_entry = ''
+        for part in re.split(r",", entry_match.group(2)):
+            tmp_entry += re.sub(r'\n', '', part)
+            # since _is_balanced also returns True for strings containing
+            # no braces at this also works for the initial bibentry key
+            if self._is_balanced(tmp_entry):
+                entry_content.append(re.sub(r'\n', '', tmp_entry))
+                tmp_entry = ''
+            else:  # re-introduce comma if unbalanced
+                tmp_entry += ','
+        # remove possible emtpy entry at the end of the array
         if not entry_content[-1]:
             entry_content = entry_content[:-1]
         # return type, original zotero key and the actual content list 
@@ -113,6 +126,16 @@ class BibEntry(object):
         for word in set(words):
             entry = entry.replace(word, word.lstrip("{").rstrip("}"))
         return entry
+
+    def _is_balanced(self, string):
+        """
+        Check if opening and closing curly braces are balanced in string.
+
+        :param str string: string to be checked for balanced braces
+        """
+        n_open = len(re.findall(r"\{", string))
+        n_close = len(re.findall(r"\}", string))
+        return n_open == n_close
 
     def __str__(self):
         # return bibtex entry as string
