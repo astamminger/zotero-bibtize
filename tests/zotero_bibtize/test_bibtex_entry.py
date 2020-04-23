@@ -83,7 +83,8 @@ def test_entry_type_is_recognized(bibtex_entry_type):
     from zotero_bibtize.zotero_bibtize import BibEntry
     #entry_string = (r"@{:}{{key,{{field = {{}}}}"
     #                .format(bibtex_entry_type))
-    entry_string = r"@{:}{{key,{{}}".format(bibtex_entry_type)
+    entry_string = r"@{:}{{key,{{}}}}".format(bibtex_entry_type)
+    print(entry_string)
     bibentry = BibEntry(entry_string)
     # check parsed type matches wanted type
     assert bibentry.type == bibtex_entry_type
