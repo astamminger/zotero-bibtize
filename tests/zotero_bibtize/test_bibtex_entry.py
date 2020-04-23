@@ -238,8 +238,8 @@ def test_multiple_replacement_of_capitalized():
     # words (i.e. embraced by curly braces)
     input_entry = (
         "@bibtextype{bibkey,",
-        "    field1 = {Has \\ce{{Command}}},",
-        "    field2 = {Has same word {Command}}",
+        "   field1 = {Has \\ce{{Command}}},",
+        "   field2 = {Has same word {Command}}",
         "}",
         "",
     )
@@ -247,3 +247,29 @@ def test_multiple_replacement_of_capitalized():
     bibentry = BibEntry(input_entry)
     assert bibentry.fields['field1'] == "Has \\ce{Command}"
     assert bibentry.fields['field2'] == "Has same word Command"
+
+
+def test_splitting_for_containing_termination_sequence():
+    """
+    Regression test for Issue #18
+    https://github.com/astamminger/zotero-bibtize/issues/18
+    """
+    from zotero_bibtize.zotero_bibtize import BibEntry
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "   field1 = {Regular Field Without Newlines},",
+        "   field2 = {Field containing,\n termination sequence}",
+        "}",
+        "",
+    )
+    input_entry = "\n".join(input_entry)
+    bibentry = BibEntry(input_entry)
+    input_entry = (
+        "@bibtextype{bibkey,",
+        "   field1 = {Regular Field Without Newlines},",
+        "   field2 = {Field {containing},\n termination sequence}",
+        "}",
+        "",
+    )
+    input_entry = "\n".join(input_entry)
+    bibentry = BibEntry(input_entry)
